@@ -1,0 +1,33 @@
+{
+  "dialog": [
+    ["Hallo. Toll, dass du da bist."],
+
+    ["Ich habe schon auf dich gewartet"],
+
+    ["wohin", "Wohin soll die Reise gehen?" , "keinZiel",
+      [
+        ["Ich möchte nach Australien.", "australien"],
+        ["Ich würde gerne nach Brasilien reisen.", "brasilien"],
+        ["Nach China wäre schön", "china"]
+      ]
+    ],
+
+    ["australien", "Der Flug war lang, doch jetzt bist du da", "nochmal"],
+
+    ["brasilien", "Die Hauptstadt sieht von oben aus wie ein Flugzeug.", "nochmal"],
+
+    ["china", "Das könnte man glatt den Zug nehmen.", "nochmal"],
+
+    ["nochmal", "Willst du nochmal?",
+      [
+        ["Ja", "wohin"],
+        ["nein", "end"],
+        ["weiß nicht", "???"]
+      ]
+    ],
+
+    ["keinZiel", "Alles ausgebucht"],
+
+    ["end", "War schön mit dir."]
+  ]
+}

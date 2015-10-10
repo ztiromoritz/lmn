@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>lmn.js Demo</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="./lmn.js"></script>
+    <script>
+        $(function(){
+            $.ajax({
+                url: "./dialog.json",
+                dataType: "json",
+                success: function(response) {
+                    lmn.addDialog("test",response);
+                    var dialog = lmn.startDialog("test");
+
+
+                    function next(decision){
+                        var currentResult = dialog.next(decision);
+                        console.log(currentResult);
+                        if($.type(currentResult) === "string"){
+                            var messageDiv = $('<div class="message">'+currentResult+'</div>');
+                            messageDiv.click(function(){
+                                next();
+                            });
+                            $('.content').html(messageDiv);
+                        }else if($.type(currentResult) === "object"){
+                            $('.content').html('<div class="message">'+currentResult.question+'</div>');
+                            for(var i = 0; i < currentResult.options.length; i++ ){
+                                var option = currentResult.options[i];
+                                if(option){
+                                    var optionDiv = $('<div class="option">'+option[0]+'</div>');
+                                    optionDiv.click(function(index){
+                                        return function(){
+                                            next(index);
+                                        };
+                                    }(i));
+                                    $('.content').append(optionDiv);
+                                }
+                            }
+                        }
+                    }
+
+                    next();
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .content {
+            margin: 50px auto;
+            width: 500px;
+            height: 100px;
+            background-color: #068ee9;
+            border: solid #00003f 1px;
+        }
+        .option {
+            margin-left: 30px;
+            float: left;
+            clear: both;
+            background-color: #1cbce9;
+            border: solid #00003f 1px;
+        }
+
+        .message {
+            margin-left: 10px;
+            float: left;
+            clear: both;
+            background-color: #1cbce9;
+            border: solid #00003f 1px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="content">
+
+
+
+</div>
+
+
+
+
+</body>
+</html>
