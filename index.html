@@ -8,7 +8,7 @@
     <script>
         $(function(){
             $.ajax({
-                url: "./dialog.json",
+                url: "./dialog.lmn.json",
                 dataType: "json",
                 success: function(response) {
                     lmn.addDialog("test",response);
@@ -25,7 +25,7 @@
                             });
                             $('.content').html(messageDiv);
                         }else if($.type(currentResult) === "object"){
-                            $('.content').html('<div class="message">'+currentResult.question+'</div>');
+                            $('.content').html('<div class="question">'+currentResult.question+'</div>');
                             for(var i = 0; i < currentResult.options.length; i++ ){
                                 var option = currentResult.options[i];
                                 if(option){
@@ -61,6 +61,12 @@
             clear: both;
             background-color: #1cbce9;
             border: solid #00003f 1px;
+            cursor: pointer;
+        }
+
+        .message:hover,
+        .option:hover {
+            background-color: #1bf4ff;
         }
 
         .message {
@@ -68,6 +74,15 @@
             float: left;
             clear: both;
             background-color: #1cbce9;
+            border: solid #00003f 1px;
+            cursor: pointer;
+        }
+
+        .question {
+            margin-left: 10px;
+            float: left;
+            clear: both;
+            background-color: #2ddee9;
             border: solid #00003f 1px;
         }
 
