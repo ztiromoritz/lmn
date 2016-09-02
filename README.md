@@ -53,9 +53,10 @@ A slightly bigger dialog tree library. LMNOP stands for: Label, Message, Next, O
         ['end', 'bye,bye']
     ]
 }
+```
 
 Paths descriptions: [trigger, reaction message, nextNodeLabel]
- * trigger:
+ * trigger
   * "ladder"      - ladder can be clicked
   * "ladder>tree" - ladder can be dropped onto tree, but not vice versa
   * "apple+grapes" - apple can be dropped onto grapes and vice versa
@@ -68,5 +69,3 @@ Paths descriptions: [trigger, reaction message, nextNodeLabel]
     * [trigger, reaction message, nextNodeLabel, !transformations!]
     * "" - empty string for noop
     * "apple->apple slices" - "apple" will be substituted with "apple slices"
-
-```
