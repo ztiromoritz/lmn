@@ -1,0 +1,16 @@
+{
+  "dialog": [
+    ["message"],
+    ["labelA", "message"],
+    ["labelB", "message", "labelA"],
+    ["message", [
+      ["option1 message", "labelA"]
+    ]],
+    ["labelC","message", [
+      ["option1 message", "labelB"]
+    ]],
+    ["labelD","message","labelA", [
+      ["option1 message", "labelB"]
+    ]]
+  ]
+}

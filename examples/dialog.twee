@@ -1,0 +1,107 @@
+:: Start
+[[NPC1]]
+
+[[NPC2]]
+
+
+:: StoryTitle
+Untitled Story
+
+
+:: StoryAuthor
+Anonymous
+
+
+:: NPC2
+Hallo ich muss dir eine Geschichte erzählen
+
+[[|NEXT1]]
+
+<<display "Include">>
+
+
+:: NPC1
+Möchten sie ein paar Tränke kaufen.
+[[Ja!|Ja]]
+[[Nein, danke.|Close]]
+[[Was haben sie denn noch?|Was]]
+[[Ich bin Pirat|Pirat]]
+
+
+:: Ja
+[[Rot]] oder [[Blau]]?
+
+
+:: Blau
+Blau
+
+
+:: Rot
+Rot
+
+
+:: Was
+Test des Actions-Macros
+<<display "ActionsInclude">>
+
+
+
+:: Pirat
+
+
+
+:: NEXT1
+Sie beginnt in einem Dorf am Oberlauf des grünen Flusses.
+[[|NEXT2]]
+<<display "Include">>
+
+
+
+:: NEXT2
+Sie handelt von drei Geschwistern. Zwei Schwestern und ihr jüngerer Bruder.
+
+[[|NEXT3]]
+
+
+:: NEXT3
+
+
+
+:: Include
+Dies ist ein generischer Fülltext, der an vielen Stellen eingefügt werden kann und auch Links enthält.
+
+<<display "other">>
+
+
+:: other
+Ein anderer Fülltext
+
+
+:: amulett
+Amulett
+<<display "ActionsInclude">>
+
+
+:: gelbe ente
+Gelbe Ente
+<<display "ActionsInclude">>
+
+
+:: seil
+Eine Baum baum
+<<display "ActionsInclude">>
+
+
+:: ActionsInclude
+[[Close]]
+Was möchtest du kaufe?
+<<actions "amulett" "gelbe ente" "seil">>
+
+
+
+
+:: Close [close]
+
+
+
+
