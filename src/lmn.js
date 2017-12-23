@@ -215,7 +215,7 @@
     };
 
     /**
-     * @name DialogInstace#next
+     *
      * Main function to interact with dialog.
      * Subsequent calls to next alters the state of the dialog.
      *
@@ -233,7 +233,7 @@
      *   Be careful, the [options] array can have undefined entries to keep the selection order.
      *
      * @param {String} [decision]
-     * @returns {boolean|string|object}
+     * @returns {boolean|string|Object}
      */
     DialogInstance.prototype.next = function (decision) {
 
@@ -366,7 +366,7 @@
 
     /**
      *
-     * @returns {[string]}
+     * @returns {string[]}
      */
     DialogStore.prototype.listDialogs = function () {
         return Object.getOwnPropertyNames(this.dialogs);
