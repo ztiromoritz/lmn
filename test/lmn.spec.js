@@ -11,14 +11,14 @@ describe("DialogStore", () => {
     describe("Basics", () => {
 
         it("Ensure Interface", function () {
-            var store = new DialogStore();
+            const store = new DialogStore();
             expect(store.startDialog).to.be.a('function');
             expect(store.addDialog).to.be.a('function');
         });
 
         it("Minimal dialog", () => {
             // given
-            var store = new DialogStore();
+            const store = new DialogStore();
             const data = {dialog: []};
             // when
             store.addDialog("foo", data);
@@ -28,7 +28,7 @@ describe("DialogStore", () => {
 
         it("Dialog can be found by name", () => {
             // given
-            var store = new DialogStore();
+            const store = new DialogStore();
             const data = {dialog: []};
             const name = "myDialog";
             // when
@@ -43,7 +43,7 @@ describe("DialogStore", () => {
     describe("Parse", () => {
         it("Allowed entry styles", () => {
             // given
-            var store = new DialogStore();
+            const store = new DialogStore();
             const name = "foo";
 
             // when
@@ -51,58 +51,58 @@ describe("DialogStore", () => {
         });
 
         it("Invalid data. No parameter", () => {
-            var store = new DialogStore();
+            const store = new DialogStore();
             expect(() => store.addDialog("foo")).to.throw(/INVALID_DATA/);
         });
 
         it("Invalid data. No dialog property.", () => {
-            var store = new DialogStore();
+            const store = new DialogStore();
             expect(() => store.addDialog("foo", {})).to.throw(/INVALID_DATA/);
         });
 
         it("Invalid data. Not an array", () => {
-            var store = new DialogStore();
+            const store = new DialogStore();
             expect(() => store.addDialog("foo", {dialog: "bar"})).to.throw(/INVALID_DATA/);
         });
 
         it("Invalid Command", () => {
-            var store = new DialogStore();
+            const store = new DialogStore();
             expect(() => store.addDialog("foo", {dialog: [['A', 'message', 'next', 'foo']]})).to.throw(/INVALID_COMMAND/);
         });
 
         it("Invalid Options", () => {
-            var store = new DialogStore();
+            const store = new DialogStore();
             expect(() => store.addDialog("foo", {dialog: [['A', 'message', 'A', [['foo']]]]})).to.throw(/INVALID_OPTION/);
         });
 
         it("Next value with no matching error. LABEL_MESSAGE_>NEXT<", () => {
-            var store = new DialogStore();
+            const store = new DialogStore();
             expect(() => store.addDialog("foo", {dialog: [['A', 'message', 'next', []]]})).to.throw(/NO_LABEL_FOR_NEXT/);
         });
 
         it("Next value with no matching error. LABEL_MESSAGE_>NEXT<_OPTIONS", () => {
-            var store = new DialogStore();
+            const store = new DialogStore();
             expect(() => store.addDialog("foo", {dialog: [['A', 'message', 'next']]})).to.throw(/NO_LABEL_FOR_NEXT/);
         });
 
         it("Next value with no matching error. MESSAGE_>OPTIONS<", () => {
-            var store = new DialogStore();
+            const store = new DialogStore();
             expect(() => store.addDialog("foo", {dialog: [['message', [['foo', 'B']]]]})).to.throw(/NO_LABEL_FOR_NEXT/);
         });
 
         it("Next value with no matching error. LABEL_MESSAGE_NEXT_>OPTIONS<", () => {
-            var store = new DialogStore();
+            const store = new DialogStore();
             expect(() => store.addDialog("foo", {dialog: [['A', 'message', 'A', [['foo', 'B']]]]})).to.throw(/NO_LABEL_FOR_NEXT/);
         });
 
         it("Next value with no matching error. LABEL_MESSAGE_>OPTIONS<", () => {
-            var store = new DialogStore();
+            const store = new DialogStore();
             expect(() => store.addDialog("foo", {dialog: [['A', 'message', [['foo', 'B']]]]})).to.throw(/NO_LABEL_FOR_NEXT/);
         });
 
         it("Label collision/not unique", () => {
             // given
-            var store = new DialogStore();
+            const store = new DialogStore();
             const data = {dialog: [['labelA', 'message'], ['labelA', 'message']]};
             // when
             expect(() => store.addDialog("foo", data)).to.throw(/DUPLICATED_LABEL/);
@@ -113,7 +113,7 @@ describe("DialogStore", () => {
 
         it("Ensure Interface", () => {
             // given
-            var store = new DialogStore();
+            const store = new DialogStore();
             const data = {dialog: []};
             const name = "myDialog";
             // when
@@ -124,13 +124,13 @@ describe("DialogStore", () => {
         });
 
         it("No dialog.", () => {
-            var store = new DialogStore();
+            const store = new DialogStore();
             expect(() => store.startDialog("foo")).to.throw(/NO_SUCH_DIALOG/);
         });
 
         it("Simple sequence", () => {
             // given
-            var store = new DialogStore();
+            const store = new DialogStore();
             const data = {
                 dialog: [
                     ['FOO'],
@@ -145,15 +145,15 @@ describe("DialogStore", () => {
             // then
             let step0 = dialog.next();
             expect(step0.getType()).is.equal(Step.Type.MESSAGE);
-            expect(step0.getText()).is.equal('FOO');
+            expect(step0.getContent()).is.equal('FOO');
 
             let step1 = dialog.next();
             expect(step1.getType()).is.equal(Step.Type.MESSAGE);
-            expect(step1.getText()).is.equal('BAR');
+            expect(step1.getContent()).is.equal('BAR');
 
             let step2 = dialog.next();
             expect(step2.getType()).is.equal(Step.Type.MESSAGE);
-            expect(step2.getText()).is.equal('BATZ');
+            expect(step2.getContent()).is.equal('BATZ');
 
             let step3 = dialog.next();
             expect(step3.getType()).is.equal(Step.Type.END);
@@ -162,7 +162,7 @@ describe("DialogStore", () => {
 
         it("Simple sequence with labels", () => {
             // given
-            var store = new DialogStore();
+            const store = new DialogStore();
             const data = {
                 dialog: [
                     ['A', 'FOO'],
@@ -177,15 +177,15 @@ describe("DialogStore", () => {
             // then
             let step0 = dialog.next();
             expect(step0.getType()).is.equal(Step.Type.MESSAGE);
-            expect(step0.getText()).is.equal('FOO');
+            expect(step0.getContent()).is.equal('FOO');
 
             let step1 = dialog.next();
             expect(step1.getType()).is.equal(Step.Type.MESSAGE);
-            expect(step1.getText()).is.equal('BAR');
+            expect(step1.getContent()).is.equal('BAR');
 
             let step2 = dialog.next();
             expect(step2.getType()).is.equal(Step.Type.MESSAGE);
-            expect(step2.getText()).is.equal('BATZ');
+            expect(step2.getContent()).is.equal('BATZ');
 
             let step3 = dialog.next();
             expect(step3.getType()).is.equal(Step.Type.END);
@@ -194,7 +194,7 @@ describe("DialogStore", () => {
 
         it("Jump over", () => {
             // given
-            var store = new DialogStore();
+            const store = new DialogStore();
             const data = {
                 dialog: [
                     ['A', 'FOO', 'C'],
@@ -209,11 +209,11 @@ describe("DialogStore", () => {
             // then
             let step0 = dialog.next();
             expect(step0.getType()).is.equal(Step.Type.MESSAGE);
-            expect(step0.getText()).is.equal('FOO');
+            expect(step0.getContent()).is.equal('FOO');
 
             let step1 = dialog.next();
             expect(step1.getType()).is.equal(Step.Type.MESSAGE);
-            expect(step1.getText()).is.equal('BATZ');
+            expect(step1.getContent()).is.equal('BATZ');
 
             let step2 = dialog.next();
             expect(step2.getType()).is.equal(Step.Type.END);
@@ -221,7 +221,7 @@ describe("DialogStore", () => {
 
         it("Unfinished ", () => {
             // given
-            var store = new DialogStore();
+            const store = new DialogStore();
             const data = {
                 dialog: [
                     ['A', 'FOO', '???']
@@ -234,7 +234,7 @@ describe("DialogStore", () => {
             // then
             let step0 = dialog.next();
             expect(step0.getType()).is.equal(Step.Type.MESSAGE);
-            expect(step0.getText()).is.equal('FOO');
+            expect(step0.getContent()).is.equal('FOO');
 
             let step1 = dialog.next();
             expect(step1.getType()).is.equal(Step.Type.UNFINSHED_DIALOG);
@@ -243,7 +243,7 @@ describe("DialogStore", () => {
 
         it("Select options", () => {
             // given
-            var store = new DialogStore();
+            const store = new DialogStore();
             const data = {
                 dialog: [
                     ['A', 'FOO', [
@@ -262,25 +262,25 @@ describe("DialogStore", () => {
 
             let step0 = dialog.next();
             expect(step0.getType()).is.equal(Step.Type.QUESTION);
-            expect(step0.getText()).is.equal('FOO');
-            expect(step0.getAvaliableOptions()).is.deep.equal([
+            expect(step0.getContent()).is.equal('FOO');
+            expect(step0.getAvailableOptions()).is.deep.equal([
                 ['Goto B', 'B', 0],
                 ['Goto C', 'C', 1]
             ]);
 
             let step1 = dialog.next(0);
             expect(step1.getType()).is.equal(Step.Type.MESSAGE);
-            expect(step1.getText()).is.equal('BAR');
+            expect(step1.getContent()).is.equal('BAR');
 
             let step2 = dialog.next();
             expect(step2.getType()).is.equal(Step.Type.MESSAGE);
-            expect(step2.getText()).is.equal('BATZ');
+            expect(step2.getContent()).is.equal('BATZ');
 
         });
 
         it("Select options, missing argument.", () => {
             // given
-            var store = new DialogStore();
+            const store = new DialogStore();
             const data = {
                 dialog: [
                     ['A', 'FOO', [
@@ -303,7 +303,7 @@ describe("DialogStore", () => {
 
         it("Select options, with next.", () => {
             // given
-            var store = new DialogStore();
+            const store = new DialogStore();
             const data = {
                 dialog: [
                     ['A', 'FOO', 'END',[
@@ -323,29 +323,29 @@ describe("DialogStore", () => {
 
             let step0 = dialog.next();
             expect(step0.getType()).is.equal(Step.Type.QUESTION);
-            expect(step0.getText()).is.equal('FOO');
-            expect(step0.getAvaliableOptions()).is.deep.equal([
+            expect(step0.getContent()).is.equal('FOO');
+            expect(step0.getAvailableOptions()).is.deep.equal([
                 ['Goto B', 'B', 0],
                 ['Goto C', 'C', 1]
             ]);
 
 
-            expect(dialog.next(0).getText()).is.equal('BAR');
+            expect(dialog.next(0).getContent()).is.equal('BAR');
             let step2 = dialog.next();
             expect(step2.getType()).is.equal(Step.Type.QUESTION);
-            expect(step2.getText()).is.equal('FOO');
-            expect(step2.getAvaliableOptions()).is.deep.equal([
+            expect(step2.getContent()).is.equal('FOO');
+            expect(step2.getAvailableOptions()).is.deep.equal([
                 ['Goto C', 'C', 1]
             ]);
-            expect(dialog.next(1).getText()).is.equal('BATZ');
-            expect(dialog.next().getText()).is.equal('BYE BYE!');
+            expect(dialog.next(1).getContent()).is.equal('BATZ');
+            expect(dialog.next().getContent()).is.equal('BYE BYE!');
 
         });
 
 
         it("List dialogs.", () => {
             // given
-            var store = new DialogStore();
+            const store = new DialogStore();
             const data = {
                 dialog: [["hello"]]
             };

@@ -11,7 +11,8 @@
     "test:watch": "mocha test --watch",
     "test:coverage": "nyc --reporter=html --reporter=text mocha test",
     "doc:html": "documentation build src/lmn.js --format html --output docs/html",
-    "doc:md": "scripts/doc-readme.js"
+    "doc:md": "node scripts/doc-readme.js",
+    "doc:lint": "documentation lint src/lmn.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   },
   "homepage": "https://github.com/ztiromoritz/lmn#readme",
   "devDependencies": {
+    "@types/chai": "^4.0.10",
     "chai": "^4.1.2",
     "chromium-pickle-js": "^0.2.0",
     "commander": "^2.12.2",

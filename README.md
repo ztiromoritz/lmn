@@ -165,13 +165,11 @@ Paths descriptions: [trigger, reaction message, nextNodeLabel]
     -   [addDialog](#adddialog)
     -   [startDialog](#startdialog)
     -   [listDialogs](#listdialogs)
--   [DialogInstance](#dialoginstance)
-    -   [next](#next)
 -   [Step](#step)
+    -   [Type](#type)
     -   [getType](#gettype)
     -   [getText](#gettext)
     -   [getAvaliableOptions](#getavaliableoptions)
-    -   [Type](#type)
 
 ## DialogStore
 
@@ -190,41 +188,11 @@ Creates a single instance of the dialog given by name.
 
 -   `name`  
 
-Returns **[DialogInstance](#dialoginstance)** 
+Returns **DialogInstance** 
 
 ### listDialogs
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
-
-## DialogInstance
-
-**Parameters**
-
--   `dialog`  
-
-### next
-
-Main function to interact with dialog.
-Subsequent calls to next alters the state of the dialog.
-
-TODO: return value should be a wrapped in an Object
-Next gives:
-  1\. false - if dialog is over
-  2\. a string - as next sentence from the character you talk to
-  3\. an object - {
-     question,  //a question text
-     [options], //array of options
-  }
-  In case 3 you can decide an answer by giving the index of option you want to choose.
-  I you give no decision, the state will not be altered and you receive the question again.
-
-  Be careful, the [options] array can have undefined entries to keep the selection order.
-
-**Parameters**
-
--   `decision` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
-
-Returns **([boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean) \| [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object))** 
 
 ## Step
 
@@ -233,6 +201,8 @@ Returns **([boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference
 -   `type`  
 -   `text`  
 -   `options`  
+
+### Type
 
 ### getType
 
@@ -243,5 +213,3 @@ Returns **any**
 Returns **any** 
 
 ### getAvaliableOptions
-
-### Type

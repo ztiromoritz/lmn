@@ -14,7 +14,6 @@
 }(this, function () {
     'use strict';
 
-
     /**
      *
      * @constructor
@@ -117,7 +116,7 @@
     }
 
     function hasLabel(type) {
-        return (type != MESSAGE && type !== MESSAGE_OPTIONS);
+        return (type !== MESSAGE && type !== MESSAGE_OPTIONS);
     }
 
     function validateCommandNext(labels, label, command, commandIndex) {
@@ -128,7 +127,7 @@
 
     function validateOptionType(option, index, optionIndex) {
         var type = commandType(option);
-        if (type == OPTION_NEXT)
+        if (type === OPTION_NEXT)
             return;
         throw new Error(ERROR_CODE.INVALID_OPTION + ": Invalid Option [" + option + "] type [" + type + "] in command [" + index + "] option [" + optionIndex + "]");
     }
@@ -146,7 +145,7 @@
     }
 
     /**
-     *
+     * @memberof DialogStore#
      * @param name
      * @param data
      */
@@ -163,7 +162,7 @@
                 labels[label] = i;
             }
         });
-        //Wildcard to have unfinised dialogs
+        //Wildcard to have unfinished dialogs
         labels["???"] = -1;
 
         //Then check for correct label use in next
@@ -199,11 +198,8 @@
         return JSON.parse(JSON.stringify(dialog));
     }
 
-
-
-
     /**
-     *
+     * @private
      * @param dialog
      * @constructor
      */
@@ -219,7 +215,6 @@
      * Main function to interact with dialog.
      * Subsequent calls to next alters the state of the dialog.
      *
-     * TODO: return value should be a wrapped in an Object
      * Next gives:
      *   1. false - if dialog is over
      *   2. a string - as next sentence from the character you talk to
@@ -231,9 +226,9 @@
      *   I you give no decision, the state will not be altered and you receive the question again.
      *
      *   Be careful, the [options] array can have undefined entries to keep the selection order.
-     *
-     * @param {String} [decision]
-     * @returns {boolean|string|Object}
+     * @memberof DialogInstance#
+     * @param {Number} [decision]
+     * @returns {Step}
      */
     DialogInstance.prototype.next = function (decision) {
 
@@ -296,30 +291,30 @@
 
     /**
      *
-     * @param type
-     * @param text
-     * @param options
+     * @param {Number} type
+     * @param {string} [content]
+     * @param {array} [options]
      * @constructor
      */
-    var Step = function (type, text, options) {
+    var Step = function (type, content, options) {
         this.type = type;
-        this.text = text;
+        this.content = content;
         this.options = options;
     };
 
     /**
-     *
-     * @type {{END: number, MESSAGE: number, QUESTION: number, UNFINSHED_DIALOG: number}}
+     * @memberof Step
+     * @type {{END: number, MESSAGE: number, QUESTION: number, UNFINISHED_DIALOG: number}}
      */
     Step.Type = {
         "END": 0,
         "MESSAGE": 1,
         "QUESTION": 2,
-        "UNFINSHED_DIALOG": 3
+        "UNFINISHED_DIALOG": 3
     };
 
     /**
-     *
+     * @memberof Step#
      * @returns {*}
      */
     Step.prototype.getType = function () {
@@ -327,17 +322,17 @@
     };
 
     /**
-     *
-     * @returns {*}
+     * @memberof Step#
+     * @returns {string}
      */
-    Step.prototype.getText = function () {
-        return this.text;
+    Step.prototype.getContent = function () {
+        return this.content;
     };
 
     /**
-     *
+     * @memberof Step#
      */
-    Step.prototype.getAvaliableOptions = function () {
+    Step.prototype.getAvailableOptions = function () {
         return this.options
             .map(function (entry, index) {
                 if (entry) {
@@ -353,6 +348,7 @@
 
     /**
      * Creates a single instance of the dialog given by name.
+     * @memberof DialogStore#
      * @param name
      * @returns {DialogInstance}
      */
@@ -365,7 +361,7 @@
     };
 
     /**
-     *
+     * @memberof DialogStore#
      * @returns {string[]}
      */
     DialogStore.prototype.listDialogs = function () {
