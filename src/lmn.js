@@ -45,6 +45,13 @@
     //If you return to this question, all options will be available again
     var MESSAGE_OPTIONS = STR + ARR;
 
+    // Question with options and a default next.
+    // Options will be available only once.
+    // If you return to this questions, you only see remaining options.
+    // If all options are taken. The question will not be presented again
+    // and the dialog goes direct to the command given in next.
+    var MESSAGE_OPTIONS_NEXT = STR + ARR + STR;
+
     //Question with label and options
     //If you return to this question, all options will be available again
     var LABEL_MESSAGE_OPTIONS = STR + STR + ARR;
@@ -54,9 +61,10 @@
     // If you return to this questions, you only see remaining options.
     // If all options are taken. The question will not be presented again
     // and the dialog goes direct to the command given in next.
-    var LABEL_MESSAGE_NEXT_OPTIONS = STR + STR + STR + ARR;
+    var LABEL_MESSAGE_OPTIONS_NEXT = STR + STR + ARR + STR ;
 
-    //
+
+    // Type of option entry in options array
     var OPTION_NEXT = STR + STR;
 
     var ERROR_CODE = {
@@ -108,15 +116,16 @@
             || type === LABEL_MESSAGE
             || type === LABEL_MESSAGE_NEXT
             || type === MESSAGE_OPTIONS
+            || type === MESSAGE_OPTIONS_NEXT
             || type === LABEL_MESSAGE_OPTIONS
-            || type === LABEL_MESSAGE_NEXT_OPTIONS) {
+            || type === LABEL_MESSAGE_OPTIONS_NEXT) {
             return type;
         }
         throw new Error(ERROR_CODE.INVALID_COMMAND + ": Invalid Command [" + command + "] type [" + type + "] in [" + index + "]");
     }
 
     function hasLabel(type) {
-        return (type !== MESSAGE && type !== MESSAGE_OPTIONS);
+        return (type !== MESSAGE && type !== MESSAGE_OPTIONS && type !== MESSAGE_OPTIONS_NEXT);
     }
 
     function validateCommandNext(labels, label, command, commandIndex) {
@@ -165,22 +174,26 @@
         //Wildcard to have unfinished dialogs
         labels["???"] = -1;
 
-        //Then check for correct label use in next
+        //Check for correct label use in next
+        //Check options
         commands.forEach(function (command, i) {
-            var label = null;
+            var next = null;
             var options = [];
             var type = commandType(command);
             if (LABEL_MESSAGE_NEXT === type) {
-                label = command[2];
+                next = command[2];
             } else if (MESSAGE_OPTIONS === type) {
+                options = command[1];
+            } else if (MESSAGE_OPTIONS_NEXT === type) {
+                next = command[2];
                 options = command[1];
             } else if (LABEL_MESSAGE_OPTIONS === type) {
                 options = command[2];
-            } else if (LABEL_MESSAGE_NEXT_OPTIONS === type) {
-                label = command[2];
-                options = command[3];
+            } else if (LABEL_MESSAGE_OPTIONS_NEXT === type) {
+                next = command[3];
+                options = command[2];
             }
-            if (label) validateCommandNext(labels, label, command, i);
+            if (next) validateCommandNext(labels, next, command, i);
             options.forEach(function (option, k) {
                 validateOptionType(option, i, k);
                 validateOptionNext(labels, option, i, k);
@@ -204,7 +217,7 @@
      * @constructor
      */
     var DialogInstance = function (dialog) {
-        this.step = 0;                  // current step in command array
+        this.currentStep = 0;                  // current step in command array
         this.pendingOptions = null;     // copy of the current array of option
         this.usedOptions = {};          // { 3 : {0:true,2:true}, 4: {0:true,5:true}}
         this.dialog = dialog;           // static dialog
@@ -236,37 +249,52 @@
             if (arguments.length === 0)
                 return this.pendingOptions;
             var label = this.pendingOptions.options[decision][1];
-            this.usedOptions[this.step] = this.usedOptions[this.step] || Object.create(null);
-            this.usedOptions[this.step][decision] = true;
-            this.step = this.dialog.labels[label];
+            this.usedOptions[this.currentStep] = this.usedOptions[this.currentStep] || Object.create(null);
+            this.usedOptions[this.currentStep][decision] = true;
+            this.currentStep = this.dialog.labels[label];
             this.pendingOptions = null;
         }
 
-        if (this.step >= this.dialog.commands.length){
+        if (this.currentStep >= this.dialog.commands.length){
             return new Step(Step.Type.END);
-        }else if (this.step === -1){
+        }else if (this.currentStep === -1){
             return new Step(Step.Type.UNFINSHED_DIALOG);
         }
 
-        var command = this.dialog.commands[this.step];
+        var command = this.dialog.commands[this.currentStep];
         var type = commandType(command);
 
         if (MESSAGE === type) {
-            this.step++;
+            this.currentStep++;
             return new Step(Step.Type.MESSAGE, command[0]);
         } else if (LABEL_MESSAGE === type) {
-            this.step++;
+            this.currentStep++;
             return new Step(Step.Type.MESSAGE, command[1]);
         } else if (LABEL_MESSAGE_NEXT === type) {
-            this.step = this.dialog.labels[command[2]];
+            this.currentStep = this.dialog.labels[command[2]];
             return new Step(Step.Type.MESSAGE, command[1]);
         } else if (LABEL_MESSAGE_OPTIONS === type) {
             this.pendingOptions = new Step(Step.Type.QUESTION, command[1], command[2]);
             return this.pendingOptions;
-        } else if (LABEL_MESSAGE_NEXT_OPTIONS === type) {
-            var usedOptionsForStep = this.usedOptions[this.step] || EMPTY_SET;
+        } else if (MESSAGE_OPTIONS === type) {
+            this.pendingOptions = new Step(Step.Type.QUESTION, command[0], command[1]);
+            return this.pendingOptions;
+        } else if (LABEL_MESSAGE_OPTIONS_NEXT === type || MESSAGE_OPTIONS_NEXT === type) {
+            var message, options, next;
+            if(LABEL_MESSAGE_OPTIONS_NEXT === type ){
+                message = command[1];
+                options = command[2];
+                next = command[3];
+            }
+            if(MESSAGE_OPTIONS_NEXT === type){
+                message = command[0];
+                options = command[1];
+                next = command[2];
+            }
+
+            var usedOptionsForStep = this.usedOptions[this.currentStep] || EMPTY_SET;
             var pending = [];
-            var options = command[3];
+
             for (var i = 0; i < options.length; i++) {
                 if (!usedOptionsForStep[i]) {
                     pending[i] = (options[i]);
@@ -278,11 +306,11 @@
                 return (curr) ? prev + 1 : prev;
             }, 0);
             if (pendingCount > 0) {
-                this.pendingOptions = new Step(Step.Type.QUESTION, command[1], pending);
+                this.pendingOptions = new Step(Step.Type.QUESTION, message, pending);
                 return this.pendingOptions;
             } else {
                 //No options left
-                this.step = this.dialog.labels[command[2]];
+                this.currentStep = this.dialog.labels[next];
                 return this.next();
             }
         }

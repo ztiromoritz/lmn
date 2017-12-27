@@ -9,8 +9,8 @@
     ["labelC","message", [
       ["option1 message", "labelB"]
     ]],
-    ["labelD","message","labelA", [
+    ["labelD","message", [
       ["option1 message", "labelB"]
-    ]]
+    ],"labelA"]
   ]
 }

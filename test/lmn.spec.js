@@ -1,7 +1,7 @@
 "use strict";
 /* globals describe, it */
 const {expect} = require("chai");
-const {DialogStore,Step} = require("../src/lmn.js");
+const {DialogStore, Step} = require("../src/lmn.js");
 
 const ALLOWED = require("./allowed.lmn.json");
 
@@ -72,15 +72,15 @@ describe("DialogStore", () => {
 
         it("Invalid Options", () => {
             const store = new DialogStore();
-            expect(() => store.addDialog("foo", {dialog: [['A', 'message', 'A', [['foo']]]]})).to.throw(/INVALID_OPTION/);
+            expect(() => store.addDialog("foo", {dialog: [['A', 'message', [['foo']], 'A']]})).to.throw(/INVALID_OPTION/);
         });
 
         it("Next value with no matching error. LABEL_MESSAGE_>NEXT<", () => {
             const store = new DialogStore();
-            expect(() => store.addDialog("foo", {dialog: [['A', 'message', 'next', []]]})).to.throw(/NO_LABEL_FOR_NEXT/);
+            expect(() => store.addDialog("foo", {dialog: [['A', 'message', [], 'next']]})).to.throw(/NO_LABEL_FOR_NEXT/);
         });
 
-        it("Next value with no matching error. LABEL_MESSAGE_>NEXT<_OPTIONS", () => {
+        it("Next value with no matching error. LABEL_MESSAGE_OPTIONS_>NEXT<", () => {
             const store = new DialogStore();
             expect(() => store.addDialog("foo", {dialog: [['A', 'message', 'next']]})).to.throw(/NO_LABEL_FOR_NEXT/);
         });
@@ -90,9 +90,19 @@ describe("DialogStore", () => {
             expect(() => store.addDialog("foo", {dialog: [['message', [['foo', 'B']]]]})).to.throw(/NO_LABEL_FOR_NEXT/);
         });
 
-        it("Next value with no matching error. LABEL_MESSAGE_NEXT_>OPTIONS<", () => {
+        it("Next value with no matching error. MESSAGE_>OPTIONS<_NEXT", () => {
             const store = new DialogStore();
-            expect(() => store.addDialog("foo", {dialog: [['A', 'message', 'A', [['foo', 'B']]]]})).to.throw(/NO_LABEL_FOR_NEXT/);
+            expect(() => store.addDialog("foo", {dialog: [['A', 'message'], ['message', [['foo', 'B']], 'A']]})).to.throw(/NO_LABEL_FOR_NEXT/);
+        });
+
+        it("Next value with no matching error. MESSAGE_OPTIONS_>NEXT<", () => {
+            const store = new DialogStore();
+            expect(() => store.addDialog("foo", {dialog: [['B2', 'message'], ['message', [['foo', 'B']], 'A']]})).to.throw(/NO_LABEL_FOR_NEXT/);
+        });
+
+        it("Next value with no matching error. LABEL_MESSAGE_>OPTIONS<_NEXT", () => {
+            const store = new DialogStore();
+            expect(() => store.addDialog("foo", {dialog: [['A', 'message', [['foo', 'B']], 'next']]})).to.throw(/NO_LABEL_FOR_NEXT/);
         });
 
         it("Next value with no matching error. LABEL_MESSAGE_>OPTIONS<", () => {
@@ -278,6 +288,36 @@ describe("DialogStore", () => {
 
         });
 
+        it("Select options. MESSAGE_OPTIONS", () => {
+            // given
+            const store = new DialogStore();
+            const data = {
+                dialog: [
+                    ['FOO', [
+                        ['Goto B', 'B'],
+                        ['Goto C', 'C'],
+                    ]],
+                    ['B', 'BAR'],
+                    ['C', 'BATZ']
+                ]
+            };
+            const name = "myDialog";
+            store.addDialog(name, data);
+            // when
+            let dialog = store.startDialog(name);
+            // then
+
+            let step0 = dialog.next();
+            expect(step0.getType()).is.equal(Step.Type.QUESTION);
+            expect(step0.getContent()).is.equal('FOO');
+            expect(step0.getAvailableOptions()).is.deep.equal([
+                ['Goto B', 'B', 0],
+                ['Goto C', 'C', 1]
+            ]);
+
+        });
+
+
         it("Select options, missing argument.", () => {
             // given
             const store = new DialogStore();
@@ -306,13 +346,13 @@ describe("DialogStore", () => {
             const store = new DialogStore();
             const data = {
                 dialog: [
-                    ['A', 'FOO', 'END',[
+                    ['A', 'FOO', [
                         ['Goto B', 'B'],
                         ['Goto C', 'C']
-                    ]],
-                    ['B', 'BAR',  'A'],
+                    ], 'END'],
+                    ['B', 'BAR', 'A'],
                     ['C', 'BATZ', 'A'],
-                    ['END','BYE BYE!']
+                    ['END', 'BYE BYE!']
                 ]
             };
             const name = "myDialog";
@@ -339,6 +379,38 @@ describe("DialogStore", () => {
             ]);
             expect(dialog.next(1).getContent()).is.equal('BATZ');
             expect(dialog.next().getContent()).is.equal('BYE BYE!');
+
+        });
+
+
+        it("Select options, with next. MESSAGE_OPTIONS_NEXT", () => {
+            // given
+            const store = new DialogStore();
+            const data = {
+                dialog: [
+                    ['FOO', [
+                        ['Goto B', 'B'],
+                        ['Goto C', 'C']
+                    ], 'END'],
+                    ['B', 'BAR'],
+                    ['C', 'BATZ'],
+                    ['END', 'BYE BYE!']
+                ]
+            };
+            const name = "myDialog";
+            store.addDialog(name, data);
+            // when
+            let dialog = store.startDialog(name);
+            // then
+
+            let step0 = dialog.next();
+            expect(step0.getType()).is.equal(Step.Type.QUESTION);
+            expect(step0.getContent()).is.equal('FOO');
+            expect(step0.getAvailableOptions()).is.deep.equal([
+                ['Goto B', 'B', 0],
+                ['Goto C', 'C', 1]
+            ]);
+
 
         });
 
